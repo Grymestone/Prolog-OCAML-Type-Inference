@@ -31,10 +31,10 @@ typeStatement(gvLet(Name, T, Code), unit):-
     bType(T), /* make sure we have an infered type */
     asserta(gvar(Name, T)). /* add definition to database */
 
-typeStatment(oIf(Cond, TCode, FCode), T) :- 
-    atom(Cond), /* Will this parse the conditional?S*/
-    typeCode(TCode),  /* Parse the first conditional */
-    typeCode(FCode), /* Parse the second conditional */
+typeStatement(oIf(Cond, TCode, FCode), T) :- 
+    typeExp(Cond, bool), /* Will this parse the conditional?S*/
+    typeExp(TCode, T),  /* Parse the first conditional */
+    typeExp(FCode, T), /* Parse the second conditional */
     bType(T). /* Return boolean? Maybe this should be unit. */
 
 typeStatement(oFor(Name, TCode, FCode, Code), T) :-
