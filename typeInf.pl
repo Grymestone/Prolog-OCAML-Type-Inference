@@ -37,10 +37,10 @@ typeStatement(oIf(Cond, TCode, FCode), T) :-
     typeExp(FCode, T), /* Parse the second conditional */
     bType(T). /* Return boolean? Maybe this should be unit. */
 
-typeStatement(oFor(Name, TCode, FCode, Code), T) :-
-    atom(Name), /* Parse name of iterator */
-    typeCode(TCode), /* Parse begin val */
-    typeCode(FCode), /* Parse end val */
+typeStatement(oFor(Iter, Cond, Inc, Code), T) :-
+    typeStatement(Iter, unit), /* Parse name of iterator */
+    typeExp(Cond, bool), /* Parse begin val */
+    typeExp(Inc, unit), /* Parse end val */
     typeExp(Code, T). /* Return what needs to be returned based on input type */
 
 typeStatement(oWhile(Name, Code), T) :-
