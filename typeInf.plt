@@ -41,4 +41,7 @@ test(mockedFct, [nondet]) :-
     typeExp(my_fct(X), T), % infer type of expression using or function
     assertion(X==int), assertion(T==float). % make sure the types infered are correct
 
+typeStatement(oFor(v, T, int, int, unit ), unit).
+typeStatement(oWhile(<(X,Y), unit ), unit).
+typeStatement(funcLet(v, float, fplus(X,Y), fplus(X,Y)), unit).
 :-end_tests(typeInf).

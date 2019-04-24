@@ -44,23 +44,22 @@ typeStatement(oFor(Var, T, Start, End, Code), unit) :-
     bType(T), /* Parse begin val */
     typeExp(Code, unit). /* Return what needs to be returned based on input type */
 
-typeStatement(oWhile(Name, Code), T) :-
-    atom(Name), /* Parse name of conditional */
-    gvar(Name), /* Fetch type of val */
-    typeExp(Code, T). /* Return what needs to be returned based on input type */
+typeStatement(oWhile(Cond, Code), T) :-
+    typeExp(Cond, bool), /* Parse name of conditional */
+    bType(T), /* Fetch type of val */
+    typeExp(Code, unit). /* Return what needs to be returned based on input type */
 
-typeStatement(funcLet(Name, T, TCode, Code), T) :-
+typeStatement(funcLet(Name, T, TCode, Code), unit) :-
     atom(Name), /* Parse name of Function*/
-    typeCode(TCode), /* Parse params*/
+    typeExp(TCode, T), /* Parse params*/
     typeExp(Code, T), /* Parse function code*/
     bType(T), /* Parse return type*/
     asserta(gvar(Name, T)). /* add function name to global vars*/
 
-typeStatement(oMatch(Name, T, Code), T) :-
+typeStatement(oMatch(Name, Code, T), T) :-
     atom(Name),
-    gvar(Name),
-    bType(T),
-    typeExp(Code, T).
+    /*I feel like we should check for the variable's type and then */
+    typeExp(Code, T).    
 
 
 
@@ -86,9 +85,6 @@ bType(int).
 bType(float).
 bType(string).
 bType(bool).
-bType(a). /* User defined types */
-bType(b). /* User defined types */
-bType(c). /* User defined types */
 bType(unit). /* unit type for things that are not expressions */
 /*  functions type.
     The type is a list, the last element is the return type
