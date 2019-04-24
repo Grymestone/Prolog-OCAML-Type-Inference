@@ -66,6 +66,7 @@ typeStatement(oMatch(Name, T, Code), T) :-
 /* Code is simply a list of statements. The type is 
     the type of the last statement 
 */
+typeCode([], T) :- bType(T).
 typeCode([S], T):-typeStatement(S, T).
 typeCode([S, S2|Code], T):-
     typeStatement(S,_T),
@@ -130,7 +131,10 @@ fType(fToString, [float, string]).
 fType(stringTof, [string, float]).
 fType(stringToi, [string, int]).
 fType(print, [_X, unit]). /* simple print */
-
+fType('<', [int, int, bool]).
+fType('>', [int, int, bool]).
+fType('<.', [float, float, bool]).
+fType('<.', [float, float, bool]).
 /* Find function signature
    A function is either buld in using fType or
    added as a user definition with gvar(fct, List)
