@@ -56,10 +56,11 @@ typeStatement(oWhile(Cond, Code), T) :-
     bType(T), /* Fetch type of val */
     typeExp(Code, unit). /* Return what needs to be returned based on input type */
 
-typeStatement(funcLet(Name, T, TCode, S, Code), unit) :-
+typeStatement(funcLet(Name, T, TCode, S, Code), S) :-
     atom(Name), /* Parse name of Function*/
     typeExp(TCode, T), /* Parse params*/
     typeCode(Code, S), /* Parse function code*/
+    bType(S),
     bType(T), /* Parse return type*/
     retractall(lvar(_,_)),
     asserta(gvar(Name, T)). /* add function name to global vars*/
@@ -79,6 +80,7 @@ typeCode([S], T):-typeStatement(S, T).
 typeCode([S, S2|Code], T):-
     typeStatement(S,_T),
     typeCode([S2|Code], T).
+typeCode(E, T) :- typeExp(E, T).
 
 /* top level function */
 infer(Code, T) :-

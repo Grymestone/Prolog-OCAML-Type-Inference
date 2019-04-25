@@ -1,5 +1,6 @@
 :- begin_tests(typeInf).
 :- include(typeInf). 
+:- dynamic(gvar/2).
 :- dynamic(lvar/2).
 
 /* Note: when writing tests keep in mind that 
@@ -49,10 +50,12 @@ test(mockedFct, [nondet]) :-
     assertion(X==int), assertion(T==float). % make sure the types infered are correct
 
 test(mockedFor, [nondet]) :-
-    typeStatement(oFor(v, T, int, int, unit ), unit).
+    typeStatement(oFor(v, T, int, int, unit ), unit),
+    assertion(T==int).
 
-test(mockedWhile, [nondet]) :-
-    typeStatement(oWhile(<(X,Y), unit ), unit).
+test(inferWhile, [nondet]) :-
+    infer([oWhile(<(X,Y), unit)], unit),
+    assertion(X==int), assertion(Y==int).
 
 test(mockedFuncLet, [nondet]) :-
     typeStatement(funcLet(v, float, fplus(X,Y), unit, [lvLet(zar, float, fplus(X,Y))]), unit).
@@ -60,7 +63,20 @@ test(mockedFuncLet, [nondet]) :-
 test(mockedMatch, [nondet]) :-
     typeStatement(oMatch(v, float, float), float).
 
-% test(mockedFunction, [nondet]) :-
-%     typeStatement(funcLet(v, float, typeStatement(oMatch(v, float, float), float), typeStatement(oMatch(v, float, float), float)), unit).
-    
+% test to infer If statements
+test(inferIf, [nondet]) :-
+    infer([oIf(<(X,Y), iplus(A,B), fToInt(C))], T),
+    assertion(T==int), assertion(X==int), assertion(Y==int), assertion(A==int), assertion(B==int), assertion(C==float).
+
+% test to infer If with Variable statements
+test(inferVarIf, [nondet]) :-
+    infer([gvLet(v, T, fplus(X, Y)), oIf(<.(X,Y), fToInt(X), fToInt(Y))], Z),
+    assertion(T==float), assertion(X==float), assertion(Y==float), assertion(Z==int).
+
+% test to infer If with Variable statements
+test(inferFuncLVar, [nondet]) :-
+    infer([funcLet(v, F, float, S, [fplus(X,Y)])], L).
+
+
+
 :-end_tests(typeInf).
