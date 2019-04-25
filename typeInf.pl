@@ -1,6 +1,7 @@
 /* match functions by unifying with arguments 
     and infering the result
 */
+:-dynamic(gvar/2).
 :-dynamic(lvar/2).
 
 typeExp(Fct, T):-
@@ -22,7 +23,6 @@ typeExpList([Hin|Tin], [Hout|Tout]):-
     typeExp(Hin, Hout), /* type infer the head */
     typeExpList(Tin, Tout). /* recurse */
 
-/* TODO: add statements types and their type checking */
 /* global variable definition
     Example:
         gvLet(v, T, int) ~ let v = 3;

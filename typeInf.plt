@@ -73,10 +73,50 @@ test(inferVarIf, [nondet]) :-
     infer([gvLet(v, T, fplus(X, Y)), oIf(<.(X,Y), fToInt(X), fToInt(Y))], Z),
     assertion(T==float), assertion(X==float), assertion(Y==float), assertion(Z==int).
 
-% test to infer If with Variable statements
+% test to infer function output
+test(inferFuncF, [nondet]) :-
+    infer([funcLet(v, F, float, S, [fplus(X,Y)])], L),
+    assertion(L==float), assertion(F==float), assertion(S==float), assertion(X==float), assertion(Y==float).
+
+% test to infer function with local let output
 test(inferFuncLVar, [nondet]) :-
-    infer([funcLet(v, F, float, S, [fplus(X,Y)])], L).
+    infer([funcLet(v, F, float, S, [lvLet(x, float, float), print(_)])], L),
+    assertion(L==unit), assertion(F==float), assertion(S==unit).
 
+% test match
+test(inferMatch, [nondet]) :-
+    infer([oMatch(v, float, float), float], D),
+    assertion(D==float).
 
+% test for
+test(inferFor, [nondet]) :-
+    infer([oFor(v, T, int, int, unit ), unit], W),
+    assertion(T==int), assertion(W==unit).
+
+% test two local variables
+test(inferFuncLVarLVar, [nondet]) :-
+    infer([funcLet(v, F, float, S, [lvLet(x, float, float), lvLet(y, int, int)])], L),
+    assertion(F==float), assertion(S==unit), assertion(L==unit).
+
+% Test Global Variable in IF While
+test(inferGvarIfWhile, [nondet]) :-
+    infer([oFor(v, T, int, int, unit ), unit], W),
+    assertion(T==int), assertion(W==unit).
+
+% Test type of function through If
+test(grandInfer, [nondet]):-
+    infer([funcLet(v, F, int, S, [oIf(<.(X, Y), fToInt(X), fToInt(Y))])], W),
+    assertion(F==int), assertion(S==int), assertion(X==float), assertion(Y==float), assertion(W==int).
+
+% Test Global Variable and If and Match
+test(inferMatch, [nondet]):-
+    infer([gvLet(v, T, fplus(X, Y)), oIf(<.(X,Y), fToInt(X), fToInt(Y))], Z),
+    infer([funcLet(ve, F, int, S, [oMatch(v, int, int)])], W),
+    assertion(F==int), assertion(S==int), assertion(X==float), assertion(Y==float), assertion(W==int), assertion(T==float), assertion(Z==int).
+
+test(infergvLet, [nondet]):-
+    infer([gvLet(v, T, fplus(X, Y)), oIf(<.(X,Y), fToInt(X), fToInt(Y))], Z),
+    assertion(T==float), assertion(Z==int), 
+    gvar(v, int).
 
 :-end_tests(typeInf).
