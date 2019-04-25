@@ -1,6 +1,8 @@
 /* match functions by unifying with arguments 
     and infering the result
 */
+:-dynamic(lvar/2).
+
 typeExp(Fct, T):-
     \+ var(Fct), /* make sure Fct is not a variable */ 
     \+ atom(Fct), /* or an atom */
@@ -62,7 +64,7 @@ typeStatement(funcLet(Name, T, TCode, S, Code), S) :-
     typeCode(Code, S), /* Parse function code*/
     bType(S),
     bType(T), /* Parse return type*/
-    retractall(lvar(_,_)),
+    retractall(lvar(_, _)),
     asserta(gvar(Name, T)). /* add function name to global vars*/
 
 typeStatement(oMatch(Name, Code, T), T) :-
@@ -80,7 +82,11 @@ typeCode([S], T):-typeStatement(S, T).
 typeCode([S, S2|Code], T):-
     typeStatement(S,_T),
     typeCode([S2|Code], T).
-typeCode(E, T) :- typeExp(E, T).
+typeCode([S, S2|Code], T):-
+    typeExp(S,_T),
+    typeCode([S2|Code], T).
+typeCode([E], T):-typeExp(E, T).
+% typeCode(E, T) :- typeExp(E, T).
 
 /* top level function */
 infer(Code, T) :-
@@ -163,4 +169,4 @@ functionType(Name, Args) :-
 
 % This gets wiped out but we have it here to make the linter happy
 gvar(_, _) :- false().
-lvar(_,_) :- false().
+lvar(_, _) :- false().
