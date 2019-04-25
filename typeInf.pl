@@ -149,6 +149,9 @@ fType('<.', [float, float, bool]).
 % Check the user defined functions first
 functionType(Name, Args):-
     gvar(Name, Args),
+    is_list(Args). % make sure we have a function not a simple variable
+
+functionType(Name, Args):-
     lvar(Name, Args),
     is_list(Args). % make sure we have a function not a simple variable
 

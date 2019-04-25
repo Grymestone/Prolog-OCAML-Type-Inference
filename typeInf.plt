@@ -1,5 +1,6 @@
 :- begin_tests(typeInf).
 :- include(typeInf). 
+:- dynamic(lvar/2).
 
 /* Note: when writing tests keep in mind that 
     the use of of global variable and function definitions
