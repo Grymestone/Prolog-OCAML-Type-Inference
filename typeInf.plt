@@ -55,7 +55,7 @@ test(mockedWhile, [nondet]) :-
     typeStatement(oWhile(<(X,Y), unit ), unit).
 
 test(mockedFuncLet, [nondet]) :-
-    typeStatement(funcLet(v, float, fplus(X,Y), fplus(X,Y)), unit).
+    typeStatement(funcLet(v, float, fplus(X,Y), unit, [lvLet(zar, float, fplus(X,Y))]), unit).
 
 test(mockedMatch, [nondet]) :-
     typeStatement(oMatch(v, float, float), float).
