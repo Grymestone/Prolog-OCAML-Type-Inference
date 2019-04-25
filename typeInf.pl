@@ -31,6 +31,13 @@ typeStatement(gvLet(Name, T, Code), unit):-
     bType(T), /* make sure we have an infered type */
     asserta(gvar(Name, T)). /* add definition to database */
 
+typeStatement(lvLet(Name, T, Code), unit):-
+    atom(Name), /* make sure we have a bound name */
+    typeExp(Code, T), /* infer the type of Code and ensure it is T */
+    bType(T), /* make sure we have an infered type */
+    asserta(lvar(Name, T)). /* add definition to database */
+
+
 typeStatement(oIf(Cond, TCode, FCode), T) :- 
     typeExp(Cond, bool), /* Will this parse the conditional?S*/
     typeExp(TCode, T),  /* Parse the first conditional */
@@ -54,6 +61,7 @@ typeStatement(funcLet(Name, T, TCode, Code), unit) :-
     typeExp(TCode, T), /* Parse params*/
     typeExp(Code, T), /* Parse function code*/
     bType(T), /* Parse return type*/
+    retractall(lvar(_,_)),
     asserta(gvar(Name, T)). /* add function name to global vars*/
 
 typeStatement(oMatch(Name, Code, T), T) :-
@@ -111,6 +119,7 @@ bType([H|T]):- bType(H), bType(T).
 */
 
 deleteGVars():-retractall(gvar), asserta(gvar(_X,_Y):-false()).
+deleteLVars():-retractall(lvar), asserta(lvar(_X,_Y):-false()).
 
 /*  builtin functions
     Each definition specifies the name and the 
@@ -140,6 +149,7 @@ fType('<.', [float, float, bool]).
 % Check the user defined functions first
 functionType(Name, Args):-
     gvar(Name, Args),
+    lvar(Name, Args),
     is_list(Args). % make sure we have a function not a simple variable
 
 % Check first built in functions
@@ -148,3 +158,4 @@ functionType(Name, Args) :-
 
 % This gets wiped out but we have it here to make the linter happy
 gvar(_, _) :- false().
+lvar(_,_) :- false().
