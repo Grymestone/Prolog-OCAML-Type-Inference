@@ -41,7 +41,25 @@ test(mockedFct, [nondet]) :-
     typeExp(my_fct(X), T), % infer type of expression using or function
     assertion(X==int), assertion(T==float). % make sure the types infered are correct
 
-typeStatement(oFor(v, T, int, int, unit ), unit).
-typeStatement(oWhile(<(X,Y), unit ), unit).
-typeStatement(funcLet(v, float, fplus(X,Y), fplus(X,Y)), unit).
+test(mockedFct, [nondet]) :-
+    deleteGVars(), % clean up variables since we cannot use infer
+    asserta(gvar(my_fct, [int, float])), % add my_fct(int)-> float to the gloval variables
+    typeExp(my_fct(X), T), % infer type of expression using or function
+    assertion(X==int), assertion(T==float). % make sure the types infered are correct
+
+test(mockedFor, [nondet]) :-
+    typeStatement(oFor(v, T, int, int, unit ), unit).
+
+test(mockedWhile, [nondet]) :-
+    typeStatement(oWhile(<(X,Y), unit ), unit).
+
+test(mockedFuncLet, [nondet]) :-
+    typeStatement(funcLet(v, float, fplus(X,Y), fplus(X,Y)), unit).
+
+test(mockedMatch, [nondet]) :-
+    typeStatement(oMatch(v, float, float), float).
+
+% test(mockedFunction, [nondet]) :-
+%     typeStatement(funcLet(v, float, typeStatement(oMatch(v, float, float), float), typeStatement(oMatch(v, float, float), float)), unit).
+    
 :-end_tests(typeInf).
